@@ -11,23 +11,24 @@ def send_mail():
     # Email configuration 
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
-    sender_email = "shubhamsahu345@gmail.com"
+    sender_email = "shubhamsahu346@gmail.com"
     receiver_email = "shubham.d.sahu@capgemini.com"
     password = os.getenv('password')
+
 
     # Create the email content 
 
     msg = MIMEMultipart()
     msg['from'] = sender_email
     msg['to'] = receiver_email
-    msg ['subject'] = 'Daily report'
+    msg['subject'] = 'Testing Daily report'
 
-    body = 'this is daily report'
+    body = "Hello All,\nPlease find the daily report for testing data.\n--\nThanks & Regards,\nShubham."
     msg.attach(MIMEText(body, 'plain'))
 
-    filename = 'report.pdf'
+    filename = 'C:/Project/Email_Report_Sender/reports/Test_case_daily_results.csv'
     with open(filename, 'rb') as f:
-        pdf_attachment = MIMEApplication(f.read(), _subtype='pdf')
+        pdf_attachment = MIMEApplication(f.read(), _subtype='csv')
         pdf_attachment.add_header('Content-Disposition', 'attachment', filename=filename)
         msg.attach(pdf_attachment)
 
@@ -40,19 +41,23 @@ def send_mail():
         server.login(sender_email,password)
 
         # send the email 
-        server.sendmail(sender_email, receiver_email, msg)
+        server.sendmail(sender_email, receiver_email, msg.as_string())
 
         # terminate the session 
 
         server.quit()
 
-        print("email sent successfully")
+        print("Email Sent Successfully")
 
     except Exception as e:
         print(f' Faild to send email: {e}')
 
-send_mail()
+schedule.every().day.at("00:54").do(send_mail)
 
+while True:
+    print("Running schedule Task... ")
+    schedule.run_pending()
+    time.sleep(60)
 
 
 
